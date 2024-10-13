@@ -1,14 +1,21 @@
-import pkg from 'pg'
-const {Pool} = pkg
-import {configDotenv} from 'dotenv'
-configDotenv()
+import pkg from 'pg';
+const { Pool } = pkg;
+import { config } from 'dotenv';
+
+// Load environment variables from .env file
+config();
 
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT
-})
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from .env
+});
 
-export default pool
+// Optional: You can handle errors and log when the connection is established
+pool.on('connect', () => {
+    console.log('Connected to the database successfully!');
+});
+
+pool.on('error', (err) => {
+    console.error('Error with the database connection:', err);
+});
+
+export default pool;
